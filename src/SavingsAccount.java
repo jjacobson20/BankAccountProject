@@ -12,6 +12,14 @@ public class SavingsAccount extends BankAccount
 	private final double MIN_BAL;
 	private final double MIN_BAL_FEE;
 	
+	/**
+	 * Savings account extends bank account, has an interest rate, and a minimum balance
+	 * @param n name of person that holds the account
+	 * @param b starting balance of the account
+	 * @param r interest rate
+	 * @param mb minimum balance the account can be
+	 * @param mbf fee charged when balance goes under minimum
+	 */
 	public SavingsAccount(String n, double b, double r, double mb, double mbf)
 	{
 		super(n, b);
@@ -20,6 +28,13 @@ public class SavingsAccount extends BankAccount
 		MIN_BAL_FEE = mbf;
 	}
 	
+	/**
+	 * Savings account extends bank account, has an interest rate, and a minimum balance
+	 * @param n name of person that holds the account
+	 * @param r interest rate
+	 * @param mb minimum balance the account can be
+	 * @param mbf fee charged when balance goes under minimum
+	 */
 	public SavingsAccount(String n, double r, double mb, double mbf)
 	{
 		super(n);
@@ -28,7 +43,11 @@ public class SavingsAccount extends BankAccount
 		MIN_BAL_FEE = mbf;
 	}
 	
-	public void withDraw(double amt)
+	/**
+	 * Withdraw money from the account
+	 * @param amt amount of money to withdraw
+	 */
+	public void withdraw(double amt)
 	{
 		if(super.getBalance() - amt < 0) throw(new IllegalArgumentException());
 		
@@ -40,6 +59,11 @@ public class SavingsAccount extends BankAccount
 		else super.withdraw(amt);
 	}
 	
+	/**
+	 * Transfer money from one account to another
+	 * @param other bank account receiving the money
+	 * @param amt amount of money to transfer
+	 */
 	public void transfer(BankAccount other, double amt)
 	{
 		//accounts under same name
@@ -64,11 +88,17 @@ public class SavingsAccount extends BankAccount
 		else throw(new IllegalArgumentException());
 	}
 	
+	/**
+	 * Calculates and adds interest to balance, called in end of month update
+	 */
 	public void addInterest()
 	{	
 		super.deposit((super.getBalance() * intRate) - super.getBalance());
 	}
 	
+	/**
+	 * Calls the add interest method at end of the month
+	 */
 	public void endOfMonthUpdate()
 	{
 		addInterest();
