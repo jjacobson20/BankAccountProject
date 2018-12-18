@@ -8,9 +8,8 @@
 public class CheckingAccount extends BankAccount
 {
 	private final double OVER_DRAFT_FEE;
-	//must be negative
 	private final double TRANSACTION_FEE;
-	private final double FREE_TRANS;
+	private final int FREE_TRANS;
 	
 	private static int numTransactions;
 	
@@ -27,6 +26,7 @@ public class CheckingAccount extends BankAccount
 		OVER_DRAFT_FEE = odf;
 		TRANSACTION_FEE = tf;
 		FREE_TRANS = freeTrans;
+		numTransactions = 0;
 	}
 	
 	/**
@@ -44,6 +44,7 @@ public class CheckingAccount extends BankAccount
 		OVER_DRAFT_FEE = odf;;
 		TRANSACTION_FEE = tf;
 		FREE_TRANS = freeTrans;
+		numTransactions = 0;
 	}
 	
 	/**
@@ -52,10 +53,13 @@ public class CheckingAccount extends BankAccount
 	 */
 	public void deposit(double amt)
 	{
-		if(numTransactions < FREE_TRANS)
+		if(amt < 0) throw(new IllegalArgumentException());
+		
+		if(numTransactions >= FREE_TRANS)
 		{
+			System.out.println("yes");
 			if(amt <= TRANSACTION_FEE) throw(new IllegalArgumentException());
-			super.deposit(amt + TRANSACTION_FEE);
+			super.deposit(amt - TRANSACTION_FEE);
 		}
 		
 		else
@@ -72,20 +76,28 @@ public class CheckingAccount extends BankAccount
 	 */
 	public void withdraw(double amt)
 	{
+		if(amt < 0) throw(new IllegalArgumentException());
+		
 		//withdraw cannot happen if balance is already negative
 		if(super.getBalance() < 0) throw(new IllegalArgumentException());
 		
 		//overdraft if transaction makes balance negative
-		if(numTransactions < FREE_TRANS)
+		if(numTransactions >= FREE_TRANS)
 		{
-			if(super.getBalance() - amt + TRANSACTION_FEE < 0) super.withdraw(amt + TRANSACTION_FEE + OVER_DRAFT_FEE);
+			if(super.getBalance() - (amt + TRANSACTION_FEE) < 0)
+				super.withdraw(amt + (TRANSACTION_FEE + OVER_DRAFT_FEE));
+			
+			else
+			{
+				super.withdraw(amt + TRANSACTION_FEE);
+			}
 		}
 		
 		else
 		{
 			if(super.getBalance() - amt < 0)
 			{
-				super.withdraw(amt + TRANSACTION_FEE);
+				super.withdraw(amt + OVER_DRAFT_FEE);
 			}
 			
 			else
@@ -107,21 +119,37 @@ public class CheckingAccount extends BankAccount
 		//accounts under same name
 		if(super.getName() == other.getName())
 		{
-			//balance cannot be negative
-			if(other.getBalance() - amt - TRANSACTION_FEE < 0)
+			
+			if(numTransactions >= FREE_TRANS)
 			{
-				throw(new IllegalArgumentException());
+				//balance cannot be negative
+				if(super.getBalance() - amt - TRANSACTION_FEE < 0)
+				{
+					throw(new IllegalArgumentException());
+				}
+				
+				super.withdraw(amt + TRANSACTION_FEE);
+				other.deposit(amt - TRANSACTION_FEE);
 			}
 			
-			super.withdraw(amt + TRANSACTION_FEE);
-			other.deposit(amt + TRANSACTION_FEE);
+			else
+			{
+				if(super.getBalance() - amt < 0)
+				{
+					throw new IllegalArgumentException();
+				}
+				super.withdraw(amt);
+				other.deposit(amt);
+			}
+			
+			
 		}
 		
 		else throw(new IllegalArgumentException());
 		
 		numTransactions++;
 	}
-	
+
 	/**
 	 * Resets the transaction count to 0 at the end of the month
 	 */

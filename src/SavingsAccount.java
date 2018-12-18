@@ -49,6 +49,8 @@ public class SavingsAccount extends BankAccount
 	 */
 	public void withdraw(double amt)
 	{
+		if(amt < 0) throw(new IllegalArgumentException());
+		
 		if(super.getBalance() - amt < 0) throw(new IllegalArgumentException());
 		
 		if(super.getBalance() - amt < MIN_BAL)
@@ -59,6 +61,19 @@ public class SavingsAccount extends BankAccount
 		else super.withdraw(amt);
 	}
 	
+	public void deposit(double amt)
+	{
+		if(amt < 0)
+		{
+			throw new IllegalArgumentException();
+		}
+		
+		else
+		{
+			super.deposit(amt);
+		}
+	}
+	
 	/**
 	 * Transfer money from one account to another
 	 * @param other bank account receiving the money
@@ -67,22 +82,25 @@ public class SavingsAccount extends BankAccount
 	public void transfer(BankAccount other, double amt)
 	{
 		//accounts under same name
-		if(super.getName() == other.getName())
+		if((super.getName()).equals(other.getName()))
 		{
 			//balance cannot be negative
-			if(other.getBalance() - amt < 0)
+			if(super.getBalance() - amt < 0)
 			{
 				throw(new IllegalArgumentException());
 			}
 			
-			if(other.getBalance() - amt < MIN_BAL)
+			else if(super.getBalance() - amt < MIN_BAL)
 			{
 				super.withdraw(amt + MIN_BAL_FEE);
-				super.deposit(amt - MIN_BAL_FEE);
+				other.deposit(amt - MIN_BAL_FEE);
 			}
 			
-			super.withdraw(amt);			
-			other.deposit(amt);
+			else
+			{
+				super.withdraw(amt);			
+				other.deposit(amt);
+			}
 		}
 				
 		else throw(new IllegalArgumentException());

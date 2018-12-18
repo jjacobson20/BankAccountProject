@@ -44,7 +44,15 @@ public abstract class BankAccount
 	 */
 	public void deposit(double amt)
 	{
-		balance += amt;
+		if(amt > 0)
+		{
+			balance += amt;
+		}
+		
+		else
+		{
+			throw(new IllegalArgumentException());
+		}
 	}
 	
 	/**
