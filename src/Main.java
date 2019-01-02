@@ -46,8 +46,51 @@ public class Main
 				while(!userInput.equals("checking") && !userInput.equals("savings"))
 				{
 					System.out.println("Invalid input, try again");
-					
 				}
+				
+				if(userInput.equals("checking"))
+				{
+					String name;
+					System.out.print("Enter your name: ");
+					while(!in.hasNextLine())
+					{
+						System.out.println("Invalid input try again: ");
+					}
+					name = in.nextLine();
+					
+					double overDraftFee = 0;
+					while(!in.hasNextDouble())
+					{
+						System.out.println("Enter the overdraft fee: ");
+					}
+					overDraftFee = in.nextDouble();
+					
+					double transactionFee = 0;
+					while(!in.hasNextDouble())
+					{
+						System.out.println("Enter the transaction fee: ");
+						
+					}
+					transactionFee = in.nextDouble();
+					
+					int freeTransactions;
+					while(!in.hasNextInt())
+					{
+						System.out.println("Enter the number of free transations: ");
+					}
+					freeTransactions = in.nextInt();
+					
+					try
+					{
+						bankAccounts.add(new CheckingAccount(name, overDraftFee, transactionFee, freeTransactions));
+					}
+					
+					catch(IllegalArgumentException e)
+					{
+						System.out.println("Checking account creation failed!");
+					}
+				}
+				
 				
 			}
 			
@@ -58,7 +101,5 @@ public class Main
 		}
 		
 	}
-	
-	public void checkInput()
 	
 }
